@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>👼 홀리씨즈 교회 - 천사데이 찬스 바자회 모바일 저널</title>
+    <!-- Google Fonts for gorgeous typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for high-quality icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Style Sheet (Relative for subpath deployment) -->
+    <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+    <!-- Main Wrapper simulating a Mobile Device on Desktop, Fullscreen on Mobile -->
+    <div class="mobile-frame">
+        <!-- App Header with glassmorphism style -->
+        <header class="app-header">
+            <div class="header-logo">
+                <span class="emoji">👼</span>
+                <div class="logo-text">
+                    <h1>홀리씨즈 교회</h1>
+                    <p>천사데이 찬스 바자회</p>
+                </div>
+            </div>
+            <!-- Indicator showing Mode state (Reader / Admin) -->
+            <div id="admin-indicator" class="admin-badge mode-reader">
+                <i class="fa-solid fa-book-open"></i> 독자 모드
+            </div>
+        </header>
+
+        <!-- Main Scroll-Snap Feed Container -->
+        <main class="feed-container" id="feed-container">
+            <!-- Cards will be dynamically injected here by app.js -->
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>저널을 불러오는 중입니다...</p>
+            </div>
+        </main>
+
+        <!-- Floating Action Button (FAB) for Admin Dashboard -->
+        <button id="admin-fab" class="admin-fab" title="관리자 패널 열기">
+            <i class="fa-solid fa-sliders"></i>
+        </button>
+
+        <!-- Admin Overlay Panel (Modal) -->
+        <div id="admin-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2><i class="fa-solid fa-user-shield"></i> 관리자 대시보드</h2>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <a href="https://holyseeds.thewayworks.net/auth/logout" class="btn-logout" style="text-decoration: none; font-size: 11px; color: var(--accent-color); border: 1px solid var(--accent-color); padding: 4px 8px; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; transition: background-color 0.2s, color 0.2s;">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> 로그아웃
+                        </a>
+                        <button id="close-modal-btn" class="close-modal-btn">&times;</button>
+                    </div>
+                </div>
+                
+                <!-- Admin Tabs -->
+                <div class="admin-tabs">
+                    <button class="tab-btn active" data-tab="upload-tab">새 카드 등록</button>
+                    <button class="tab-btn" data-tab="manage-tab">카드 관리 및 삭제</button>
+                </div>
+
+                <!-- Tab 1: Upload Card Form -->
+                <div id="upload-tab" class="tab-pane active">
+                    <form id="card-upload-form" class="admin-form" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="title-input">저널 제목 <span class="required">*</span></label>
+                            <input type="text" id="title-input" name="title" placeholder="예: 맛있는 먹거리 장터 안내" required maxlength="100">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="desc-input">상세 설명 <span class="required">*</span></label>
+                            <textarea id="desc-input" name="description" placeholder="바자회 품목 정보, 일시, 장소 등 상세 내용을 입력해주세요." required maxlength="2000"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>사진 첨부 <span class="required">*</span> <span class="subtitle">(최대 4개, JPG/PNG/WEBP)</span></label>
+                            
+                            <!-- Custom File Upload Container -->
+                            <div class="file-upload-container">
+                                <input type="file" id="image-input" name="images" accept="image/*" multiple class="file-input-hidden">
+                                <label for="image-input" class="file-upload-label">
+                                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                                    <span>사진 업로드 (최대 4장)</span>
+                                </label>
+                            </div>
+                            
+                            <!-- Image Preview Container -->
+                            <div id="image-preview-container" class="preview-grid"></div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" id="submit-btn" class="btn btn-primary">
+                                <i class="fa-solid fa-paper-plane"></i> 저널 카드 등록하기
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Tab 2: Manage Cards (List and Delete) -->
+                <div id="manage-tab" class="tab-pane">
+                    <div class="manage-list-container">
+                        <p class="manage-info">등록된 카드들의 순서를 확인하고 원치 않는 카드를 즉시 삭제할 수 있습니다.</p>
+                        <ul id="admin-card-list" class="admin-card-list">
+                            <!-- Injected by JavaScript -->
+                            <li class="empty-list-msg">등록된 카드가 없습니다.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fullscreen Image Lightbox Overlay -->
+        <div id="lightbox" class="lightbox-overlay hidden">
+            <button class="lightbox-close" id="lightbox-close">&times;</button>
+            
+            <!-- Left Arrow -->
+            <button class="lightbox-nav prev" id="lightbox-prev" aria-label="이전 사진">
+                <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            
+            <!-- Lightbox Main Image -->
+            <div class="lightbox-img-wrapper">
+                <img src="" alt="전체 화면 보기" id="lightbox-img">
+            </div>
+
+            <!-- Right Arrow -->
+            <button class="lightbox-nav next" id="lightbox-next" aria-label="다음 사진">
+                <i class="fa-solid fa-chevron-right"></i>
+            </button>
+
+            <!-- Lightbox Counter -->
+            <div class="lightbox-counter" id="lightbox-counter">1 / 4</div>
+        </div>
+    </div>
+
+    <!-- Client-side script (Relative for subpath deployment) -->
+    <script src="static/js/app.js"></script>
+</body>
+</html>

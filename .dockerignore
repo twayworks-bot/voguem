@@ -1,0 +1,21 @@
+# Ignore local persistent data
+data/
+
+# Ignore Python compiler caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+env/
+
+# Ignore development logs/configs
+.git/
+.gitignore
+.dockerignore
+.gemini/
+.geminiignore
+plans/
+*.md

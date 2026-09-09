@@ -1,0 +1,928 @@
+/* ==========================================
+   Global Variables & Reset
+   ========================================== */
+:root {
+    --primary-color: #1a305e; /* Holy Seeds Navy Blue */
+    --primary-hover: #0f1e3d; /* Darker Navy */
+    --bg-color: #f4f6f9;
+    --card-bg: #ffffff;
+    --text-main: #1a202c;
+    --text-muted: #718096;
+    --text-light: #ffffff;
+    --accent-color: #d4af37; /* Angel Day Gold */
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --shadow-hard: 0 15px 40px rgba(0, 0, 0, 0.15);
+    --border-radius-lg: 24px;
+    --border-radius-md: 16px;
+    --border-radius-sm: 8px;
+    --font-sans: 'Noto Sans KR', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Disable tap highlight on mobile */
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-height: -webkit-fill-available; /* Support for iOS Safari viewport height */
+    overflow: hidden;
+}
+
+html {
+    height: -webkit-fill-available;
+}
+
+/* ==========================================
+   Mobile Device Frame Simulator
+   ========================================== */
+.mobile-frame {
+    position: relative;
+    width: 100%;
+    max-width: 450px;
+    height: 100vh;
+    height: -webkit-fill-available;
+    background-color: #000;
+    box-shadow: var(--shadow-hard);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Desktop simulated bezel and border */
+@media (min-width: 480px) {
+    .mobile-frame {
+        height: 850px;
+        border-radius: 40px;
+        border: 12px solid #1a202c;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* ==========================================
+   App Header (Glassmorphism)
+   ========================================== */
+.app-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-logo .emoji {
+    font-size: 24px;
+}
+
+.logo-text h1 {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary-color);
+    letter-spacing: -0.3px;
+}
+
+.logo-text p {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.admin-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+/* Specific styling for Admin Mode (Gold, Pulsing) */
+.admin-badge.mode-admin {
+    color: var(--accent-color);
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    animation: pulse 2s infinite;
+}
+
+/* Specific styling for Reader Mode (Muted Slate, No Pulsing) */
+.admin-badge.mode-reader {
+    color: var(--text-muted);
+    background: rgba(113, 128, 150, 0.08);
+    border: 1px solid rgba(113, 128, 150, 0.18);
+}
+
+/* ==========================================
+   Feed Container & Scroll Snap Feed
+   ========================================== */
+.feed-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch; /* Kinetic scrolling on iOS */
+    background: #000;
+}
+
+/* Hide scrollbars for the main feed to feel like a native app */
+.feed-container::-webkit-scrollbar {
+    display: none;
+}
+.feed-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Loading Spinner */
+.loading-state {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--text-light);
+    gap: 16px;
+    background: #111;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+}
+
+/* ==========================================
+   Journal Card Component
+   ========================================== */
+.journal-card {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    display: flex;
+    flex-direction: column;
+    background: #121214;
+    overflow: hidden;
+    color: var(--text-light);
+}
+
+/* Background image overlay with blur for cinematic backdrop styling */
+.card-bg-blur {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: blur(40px) brightness(0.25);
+    transform: scale(1.1);
+    z-index: 1;
+    opacity: 0.85;
+}
+
+.card-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: 76px 16px 24px 16px; /* 76px top padding to stay clear of glass header */
+}
+
+/* Card Header */
+.card-header {
+    margin-bottom: 12px;
+}
+
+.card-title {
+    font-size: 19px;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.4;
+    letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Card Image Grid Layout */
+.card-image-section {
+    flex: 1;
+    min-height: 0; /* Important for flex-child height constraints */
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--border-radius-md);
+}
+
+.card-grid {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    gap: 6px;
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Grid variation styles based on count */
+.grid-1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+}
+
+.grid-2 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+.grid-3 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 3.5fr 2.5fr;
+}
+.grid-3 .img-item:nth-child(1) {
+    grid-column: span 2;
+}
+
+.grid-4 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+/* Image Item Container */
+.img-item {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.img-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.img-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Click zoom indicator overlay */
+.img-item::after {
+    content: '\f00e';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+}
+
+.img-item:hover::after {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Card Description text section with custom scrollbar */
+.card-description-section {
+    height: 120px; /* Precise layout height for descriptions */
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 4px;
+}
+
+.card-description-section::-webkit-scrollbar {
+    width: 4px;
+}
+.card-description-section::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.02);
+}
+.card-description-section::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+.card-desc {
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.9);
+    white-space: pre-wrap; /* Keeps newlines */
+    font-weight: 400;
+}
+
+/* Card Delete Overlay (Visible to Admin only) */
+.card-delete-badge {
+    position: absolute;
+    top: 76px;
+    right: 16px;
+    background: var(--accent-color);
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 50;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    border: none;
+    font-size: 14px;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.card-delete-badge:hover {
+    transform: scale(1.1);
+    background-color: #c53030;
+}
+
+/* ==========================================
+   Floating Action Button (FAB)
+   ========================================== */
+.admin-fab {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    background: var(--primary-color);
+    color: var(--text-light);
+    border: none;
+    box-shadow: 0 8px 24px rgba(109, 93, 252, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 90;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), background 0.2s;
+}
+
+.admin-fab:hover {
+    transform: scale(1.1) rotate(45deg);
+    background: var(--primary-hover);
+}
+
+.admin-fab:active {
+    transform: scale(0.95);
+}
+
+/* ==========================================
+   Admin Modal (Overlay Panel)
+   ========================================== */
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 200;
+    display: flex;
+    justify-content: flex-end;
+    flex-direction: column;
+    transition: opacity 0.3s ease;
+}
+
+.modal-content {
+    background: #ffffff;
+    width: 100%;
+    max-height: 85%;
+    border-top-left-radius: var(--border-radius-lg);
+    border-top-right-radius: var(--border-radius-lg);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(0);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* When hidden, smoothly transition opacity and slide the content down */
+.modal-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+.modal-overlay.hidden .modal-content {
+    transform: translateY(100%);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.modal-header h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+}
+
+.close-modal-btn:hover {
+    color: var(--text-main);
+}
+
+/* Admin Tabs */
+.admin-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    background: var(--bg-color);
+    padding: 4px;
+    border-radius: var(--border-radius-md);
+}
+
+.tab-btn {
+    flex: 1;
+    border: none;
+    background: none;
+    padding: 10px 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.tab-btn.active {
+    background: #ffffff;
+    color: var(--primary-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.tab-pane {
+    display: none;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.tab-pane.active {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Upload Form Styles */
+.admin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.form-group label .required {
+    color: var(--accent-color);
+}
+
+.form-group label .subtitle {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    background-color: var(--bg-color);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(109, 93, 252, 0.15);
+}
+
+.form-group textarea {
+    height: 100px;
+    resize: none;
+}
+
+/* Hidden File Input & Styled Label */
+.file-input-hidden {
+    display: none;
+}
+
+.file-upload-container {
+    width: 100%;
+}
+
+.file-upload-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 20px;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+    background-color: var(--bg-color);
+}
+
+.file-upload-label:hover {
+    background-color: rgba(109, 93, 252, 0.04);
+    border-color: var(--primary-color);
+}
+
+.file-upload-label i {
+    font-size: 24px;
+    color: var(--primary-color);
+}
+
+.file-upload-label span {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+/* File Previews */
+.preview-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.preview-item {
+    position: relative;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.preview-item .remove-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 18px;
+    height: 18px;
+    background: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    cursor: pointer;
+    border: none;
+}
+
+.preview-item .remove-btn:hover {
+    background: rgba(229, 62, 62, 0.9);
+}
+
+/* Submit Button styling */
+.btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(109, 93, 252, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+/* Manage Tab Item List */
+.manage-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.manage-info {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.admin-card-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.admin-card-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background-color: var(--bg-color);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.admin-card-item img {
+    width: 44px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 8px;
+    background-color: #cbd5e1;
+}
+
+.admin-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.admin-card-info h3 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.admin-card-info p {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.delete-item-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 14px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: background 0.2s, color 0.2s;
+}
+
+.delete-item-btn:hover {
+    background: rgba(229, 62, 62, 0.1);
+    color: var(--accent-color);
+}
+
+.empty-list-msg {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 30px 0;
+}
+
+/* ==========================================
+   Lightbox Overlay
+   ========================================== */
+.lightbox-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 300;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.lightbox-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.lightbox-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 36px;
+    cursor: pointer;
+    z-index: 310;
+    line-height: 1;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.2);
+    transition: background 0.2s;
+}
+
+.lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    border: none;
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 310;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.lightbox-nav:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.lightbox-nav.prev {
+    left: 10px;
+}
+
+.lightbox-nav.next {
+    right: 10px;
+}
+
+.lightbox-img-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0 60px; /* Leave space for navigation arrows */
+}
+
+.lightbox-img-wrapper img {
+    max-width: 100%;
+    max-height: 80%;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 30px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 13px;
+    font-weight: 700;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================================
+   Animations
+   ========================================== */
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0% { opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { opacity: 0.8; }
+}
+
+@keyframes zoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
