@@ -257,24 +257,29 @@ async def delete_card(request: Request, card_id: str):
 if DATA_DIR.exists():
     app.mount(f"{PREFIX}/data", StaticFiles(directory=str(DATA_DIR)), name="data")
 
-# Fallback index.html route and static folder mounting under PREFIX
+# Fallback index.html route under the trailing-slash prefix (e.g. /voguem/)
 @app.get(f"{PREFIX}/")
-@app.get(PREFIX)
 def read_root():
     index_file = STATIC_DIR / "index.html"
     if index_file.exists():
         return FileResponse(index_file)
     return JSONResponse(status_code=404, content={"message": "Frontend index.html not found. Please implement it."})
 
+# Force redirect from bare PREFIX (e.g. /voguem) to trailing-slash PREFIX/ (e.g. /voguem/)
+# to ensure the browser updates its relative path context and loads assets correctly.
+if PREFIX and PREFIX != "/":
+    @app.get(PREFIX)
+    def redirect_bare_prefix_to_trailing_slash():
+        return RedirectResponse(url=f"{PREFIX}/", status_code=303)
+
+    # Automatic redirect from root / to the PREFIX/ directory
+    @app.get("/")
+    def redirect_to_prefix():
+        return RedirectResponse(url=f"{PREFIX}/", status_code=303)
+
 # Create empty static directory if it doesn't exist
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 app.mount(f"{PREFIX}/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
-
-# Automatic redirect from root / to the PREFIX/ directory
-if PREFIX and PREFIX != "/":
-    @app.get("/")
-    def redirect_to_prefix():
-        return RedirectResponse(url=f"{PREFIX}/")
 
 if __name__ == "__main__":
     import uvicorn
