@@ -158,6 +158,12 @@ def get_cards():
 
     return cards
 
+@app.get(f"{PREFIX}/api/status")
+@app.get(f"/{PREFIX}/api/status") # double slash fallback in case of //voguem/api/status
+def get_status():
+    """Health check endpoint for container lifecycle monitoring."""
+    return {"status": "ok"}
+
 @app.get(f"{PREFIX}/api/auth/status")
 async def get_auth_status(request: Request):
     """Check the client's cookie and return their admin authentication status."""
@@ -283,4 +289,4 @@ app.mount(f"{PREFIX}/static", StaticFiles(directory=str(STATIC_DIR)), name="stat
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)

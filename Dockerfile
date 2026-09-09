@@ -23,13 +23,18 @@ RUN pip install --no-cache-dir --quiet -r requirements.txt
 
 # Copy application source code
 COPY main.py .
+COPY assets/ ./assets/
 COPY static/ ./static/
 
 # Create the data directory in the container
 RUN mkdir -p /app/data
 
-# Expose port
+# Expose port 5000 for standard subpath deployment
 EXPOSE 5000
 
-# Start the application using Uvicorn
+# Health check directive for monitoring container health status
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 --start-period=5s \
+    CMD python -c "import requests; requests.get('http://localhost:5000/${DEFAULT_PREFIX}/api/status')"
+
+# Start the application using Uvicorn on port 5000
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "5000"]
