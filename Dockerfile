@@ -23,7 +23,7 @@ RUN pip install --no-cache-dir --quiet -r requirements.txt
 
 # Copy application source code
 COPY main.py .
-COPY assets/ ./assets/
+
 COPY static/ ./static/
 
 # Create the data directory in the container
