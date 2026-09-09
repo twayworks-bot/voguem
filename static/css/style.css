@@ -223,7 +223,7 @@ html {
 
 /* Card Header */
 .card-header {
-    margin-bottom: 12px;
+    margin-bottom: 8px; /* Tightened from 12px */
 }
 
 .card-title {
@@ -238,9 +238,9 @@ html {
 /* Card Image Grid Layout */
 .card-image-section {
     width: 100%;
-    max-height: 40vh; /* Bounded max height depending on phone screen height */
-    aspect-ratio: 4 / 3; /* Stable, photographic aspect ratio for the photo grid */
-    margin-bottom: 12px;
+    max-height: 30vh; /* Shrunk from 40vh to 30vh to keep layout extremely compact */
+    aspect-ratio: 16 / 10; /* Sleeker, wider aspect ratio to take less vertical space */
+    margin-bottom: 8px; /* Tightened margin from 12px */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -933,40 +933,41 @@ html {
    ========================================== */
 @media (max-height: 680px) or (max-width: 360px) {
     .card-content {
-        padding-top: 68px; /* Compact padding to secure space for content */
-        padding-bottom: 12px;
+        padding-top: 64px; /* Compact padding to secure space for content */
+        padding-bottom: 8px; /* Tightened from 12px */
     }
 
     .card-title {
-        font-size: 16px; /* Slightly smaller typography to prevent overflow */
+        font-size: 15px; /* Slightly smaller typography to prevent overflow */
     }
 
     .card-image-section {
-        max-height: 35vh; /* Scale down image container height limits */
-        aspect-ratio: 16 / 11; /* Wider aspect ratio to avoid cutoff of photo subjects */
+        max-height: 24vh; /* Scale down image container height limits tightly to 24% of viewport */
+        aspect-ratio: 16 / 9; /* Sleek, widescreen aspect ratio to reduce vertical footprint */
+        margin-bottom: 6px;
     }
 
     .card-description-section {
-        min-height: 75px; /* Compact description boundaries */
-        padding: 8px 10px;
+        min-height: 65px; /* Compact description boundaries */
+        padding: 6px 8px;
     }
 
     .card-desc {
-        font-size: 12px; /* Smaller readability size */
-        line-height: 1.5;
+        font-size: 11.5px; /* Smaller readability size */
+        line-height: 1.45;
     }
 
     /* Smaller float button and indicators for small screens */
     .admin-fab {
         bottom: 16px;
         right: 16px;
-        width: 46px;
-        height: 46px;
-        font-size: 16px;
+        width: 44px;
+        height: 44px;
+        font-size: 14px;
     }
     
     .admin-badge {
-        font-size: 10px;
-        padding: 3px 8px;
+        font-size: 9.5px;
+        padding: 2.5px 6px;
     }
 }
