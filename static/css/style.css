@@ -237,13 +237,13 @@ html {
 
 /* Card Image Grid Layout */
 .card-image-section {
-    flex: 1;
-    min-height: 0; /* Important for flex-child height constraints */
+    width: 100%;
+    max-height: 40vh; /* Bounded max height depending on phone screen height */
+    aspect-ratio: 4 / 3; /* Stable, photographic aspect ratio for the photo grid */
     margin-bottom: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100%;
     overflow: hidden;
     border-radius: var(--border-radius-md);
 }
@@ -332,7 +332,8 @@ html {
 
 /* Card Description text section with custom scrollbar */
 .card-description-section {
-    height: 120px; /* Precise layout height for descriptions */
+    flex: 1; /* Automatically occupy all remaining vertical space */
+    min-height: 90px; /* Guarantee a readable area on compact screens */
     overflow-y: auto;
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(8px);
@@ -924,5 +925,48 @@ html {
     to {
         opacity: 1;
         transform: scale(1);
+    }
+}
+
+/* ==========================================
+   Responsive Adaptability for Small/Narrow Screens
+   ========================================== */
+@media (max-height: 680px) or (max-width: 360px) {
+    .card-content {
+        padding-top: 68px; /* Compact padding to secure space for content */
+        padding-bottom: 12px;
+    }
+
+    .card-title {
+        font-size: 16px; /* Slightly smaller typography to prevent overflow */
+    }
+
+    .card-image-section {
+        max-height: 35vh; /* Scale down image container height limits */
+        aspect-ratio: 16 / 11; /* Wider aspect ratio to avoid cutoff of photo subjects */
+    }
+
+    .card-description-section {
+        min-height: 75px; /* Compact description boundaries */
+        padding: 8px 10px;
+    }
+
+    .card-desc {
+        font-size: 12px; /* Smaller readability size */
+        line-height: 1.5;
+    }
+
+    /* Smaller float button and indicators for small screens */
+    .admin-fab {
+        bottom: 16px;
+        right: 16px;
+        width: 46px;
+        height: 46px;
+        font-size: 16px;
+    }
+    
+    .admin-badge {
+        font-size: 10px;
+        padding: 3px 8px;
     }
 }
