@@ -186,7 +186,8 @@ html {
 .journal-card {
     position: relative;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
     scroll-snap-align: start;
     scroll-snap-stop: always;
     display: flex;
@@ -217,7 +218,8 @@ html {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
     padding: 76px 16px 24px 16px; /* 76px top padding to stay clear of glass header */
 }
 
@@ -238,14 +240,47 @@ html {
 /* Card Image Grid Layout */
 .card-image-section {
     width: 100%;
-    max-height: 30vh; /* Shrunk from 40vh to 30vh to keep layout extremely compact */
-    aspect-ratio: 16 / 10; /* Sleeker, wider aspect ratio to take less vertical space */
+    height: 80vh; /* Displays up to 80% of card height (80vh) at width >= 500px */
+    max-height: 80vh;
     margin-bottom: 8px; /* Tightened margin from 12px */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     border-radius: var(--border-radius-md);
+    transition: height 0.3s ease, max-height 0.3s ease;
+}
+
+/* Sizing based on width >= 500px baseline, scaling down proportionally as width shrinks */
+@media (max-width: 499px) {
+    .card-image-section {
+        height: 72vh;
+        max-height: 72vh;
+    }
+}
+@media (max-width: 450px) {
+    .card-image-section {
+        height: 64vh;
+        max-height: 64vh;
+    }
+}
+@media (max-width: 400px) {
+    .card-image-section {
+        height: 56vh;
+        max-height: 56vh;
+    }
+}
+@media (max-width: 350px) {
+    .card-image-section {
+        height: 48vh;
+        max-height: 48vh;
+    }
+}
+@media (max-width: 300px) {
+    .card-image-section {
+        height: 40vh;
+        max-height: 40vh;
+    }
 }
 
 .card-grid {
@@ -258,28 +293,32 @@ html {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Grid variation styles based on count */
+/* Grid variation styles based on count - normal (width >= 300px) */
+/* 1 image: 1x1 */
 .grid-1 {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
 }
 
+/* 2 images: 2x1 bento style */
 .grid-2 {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1.15fr 0.85fr; /* Bento-style asymmetric ratio */
     grid-template-rows: 1fr;
 }
 
+/* 3 images: bento style */
 .grid-3 {
-    grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: 3.5fr 2.5fr;
+    grid-template-columns: 1.15fr 0.85fr; /* Bento-style asymmetric ratio */
+    grid-template-rows: 1.2fr 0.8fr;
 }
 .grid-3 .img-item:nth-child(1) {
     grid-column: span 2;
 }
 
+/* 4 images: 2x2 bento style */
 .grid-4 {
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1.15fr 0.85fr; /* Bento-style asymmetric ratio */
+    grid-template-rows: 1.1fr 0.9fr;
 }
 
 /* Image Item Container */
@@ -296,6 +335,40 @@ html {
     height: 100%;
     object-fit: cover;
     transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Dynamic Image Object Positioning based on Bento grid placement */
+/* grid-2 items */
+.grid-2 .img-item:nth-child(1) img {
+    object-position: left top; /* Expose left/top portion of left card */
+}
+.grid-2 .img-item:nth-child(2) img {
+    object-position: right top; /* Expose right/top portion of right card */
+}
+
+/* grid-3 items */
+.grid-3 .img-item:nth-child(1) img {
+    object-position: center top; /* Expose center/top of spanning banner */
+}
+.grid-3 .img-item:nth-child(2) img {
+    object-position: left bottom; /* Expose left/bottom portion */
+}
+.grid-3 .img-item:nth-child(3) img {
+    object-position: right bottom; /* Expose right/bottom portion */
+}
+
+/* grid-4 items */
+.grid-4 .img-item:nth-child(1) img {
+    object-position: left top; /* Top-left image */
+}
+.grid-4 .img-item:nth-child(2) img {
+    object-position: right top; /* Top-right image */
+}
+.grid-4 .img-item:nth-child(3) img {
+    object-position: left bottom; /* Bottom-left image */
+}
+.grid-4 .img-item:nth-child(4) img {
+    object-position: right bottom; /* Bottom-right image */
 }
 
 .img-item:hover img {
@@ -334,7 +407,8 @@ html {
 .card-description-section {
     flex: 1; /* Automatically occupy all remaining vertical space */
     min-height: 90px; /* Guarantee a readable area on compact screens */
-    overflow-y: auto;
+    height: auto; /* Expand naturally based on text size, expanding the parent card */
+    overflow-y: visible; /* Disable inner scrolling so the whole card expands */
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -942,8 +1016,6 @@ html {
     }
 
     .card-image-section {
-        max-height: 24vh; /* Scale down image container height limits tightly to 24% of viewport */
-        aspect-ratio: 16 / 9; /* Sleek, widescreen aspect ratio to reduce vertical footprint */
         margin-bottom: 6px;
     }
 
@@ -969,5 +1041,43 @@ html {
     .admin-badge {
         font-size: 9.5px;
         padding: 2.5px 6px;
+    }
+}
+
+/* ==========================================
+   Small Mobile Devices (Width < 300px) Layout Override
+   ========================================== */
+@media (max-width: 300px) {
+    /* 1 image: 1x1 */
+    .grid-1 {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+    }
+
+    /* 2 images: 1x2 (stacked vertically: "위와 아래로 배치") */
+    .grid-2 {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1.15fr 0.85fr; /* Bento-style top/bottom asymmetric ratio */
+    }
+    .grid-2 .img-item:nth-child(1) img {
+        object-position: center top; /* Expose center/top for top card */
+    }
+    .grid-2 .img-item:nth-child(2) img {
+        object-position: center bottom; /* Expose center/bottom for bottom card */
+    }
+
+    /* 3 images: 2x2 Bento structure (first spans 2 columns, others below) */
+    .grid-3 {
+        grid-template-columns: 1.1fr 0.9fr;
+        grid-template-rows: 1.15fr 0.85fr;
+    }
+    .grid-3 .img-item:nth-child(1) {
+        grid-column: span 2;
+    }
+
+    /* 4 images: 2x2 Bento structure */
+    .grid-4 {
+        grid-template-columns: 1.1fr 0.9fr;
+        grid-template-rows: 1.1fr 0.9fr;
     }
 }
