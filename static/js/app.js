@@ -109,10 +109,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 gridHtml += '</div>';
             }
 
-            // Assemble Full Card DOM
+            // Assemble Full Card DOM (including modern hip decorations)
             cardEl.innerHTML = `
                 ${blurredBg}
                 <div class="card-content">
+                    <div class="card-tag-wrapper">
+                        <span class="card-accent-badge">JOURNAL #${String(cardIdx + 1).padStart(2, '0')}</span>
+                        <span class="card-edition-tag"><i class="fa-regular fa-star"></i> 천사데이</span>
+                    </div>
                     <div class="card-header">
                         <h2 class="card-title">${escapeHTML(card.title)}</h2>
                     </div>
@@ -120,6 +124,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${gridHtml}
                     </div>
                     <div class="card-description-section">
+                        <div class="deco-bracket-top-left"></div>
+                        <div class="deco-bracket-bottom-right"></div>
                         <p class="card-desc">${escapeHTML(card.description)}</p>
                     </div>
                 </div>
@@ -136,6 +142,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             feedContainer.appendChild(cardEl);
         });
+
+        // Append Gorgeous Church Logo Footer at the very bottom of the feed
+        const footerEl = document.createElement('footer');
+        footerEl.className = 'feed-footer';
+        footerEl.innerHTML = `
+            <div class="footer-logo-box">
+                <img src="${prefix}/static/church_logo.png" alt="홀리씨즈 교회 로고" class="church-logo">
+            </div>
+            <p class="footer-tagline">홀리씨즈 교회 모바일 저널</p>
+            <p class="footer-copyright">&copy; 2026 Holy Seeds Church. All Rights Reserved.</p>
+        `;
+        feedContainer.appendChild(footerEl);
     }
 
     /* ==========================================

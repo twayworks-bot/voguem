@@ -437,6 +437,125 @@ html {
     font-weight: 400;
 }
 
+/* ==========================================
+   Modern & Hip Editorial Catalog Decorations
+   ========================================== */
+.card-tag-wrapper {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+    align-items: center;
+}
+
+/* Glassmorphic Neon Gold Accent Badge */
+.card-accent-badge {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--accent-color);
+    background: rgba(212, 175, 55, 0.12);
+    border: 1px solid rgba(212, 175, 55, 0.35);
+    padding: 4px 10px;
+    border-radius: 30px;
+    text-transform: uppercase;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+.card-edition-tag {
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 30px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Elegant Tech/Editorial Corner Brackets inside Description Section */
+.deco-bracket-top-left {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 10px;
+    height: 10px;
+    border-top: 2px solid rgba(212, 175, 55, 0.5);
+    border-left: 2px solid rgba(212, 175, 55, 0.5);
+    pointer-events: none;
+}
+
+.deco-bracket-bottom-right {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+    border-bottom: 2px solid rgba(212, 175, 55, 0.5);
+    border-right: 2px solid rgba(212, 175, 55, 0.5);
+    pointer-events: none;
+}
+
+/* Subtle glow and upscale hover scale effect on Bento Image grids */
+.card-grid {
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================
+   Feed Footer with Church Logo (White Background)
+   ========================================== */
+.feed-footer {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    width: 100%;
+    min-height: 100%; /* Behave as a full-size branding slide to allow perfect scroll snapping */
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px 24px;
+    text-align: center;
+    color: #1a202c;
+    border-top: 1px solid #e2e8f0;
+}
+
+.footer-logo-box {
+    background-color: #ffffff;
+    padding: 10px;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%; /* Proportional, compact width */
+    max-width: 180px; /* Restrict box size on wider screens */
+}
+
+.church-logo {
+    display: block;
+    width: 100%; /* Scale width proportionally with the box */
+    height: auto; /* Preserve horizontal aspect ratio */
+    max-height: 54px; /* Strictly cap the height to prevent vertical stretching and bloating */
+    object-fit: contain;
+}
+
+.footer-tagline {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--primary-color);
+    letter-spacing: -0.3px;
+    margin-bottom: 4px;
+}
+
+.footer-copyright {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
 /* Card Delete Overlay (Visible to Admin only) */
 .card-delete-badge {
     position: absolute;
